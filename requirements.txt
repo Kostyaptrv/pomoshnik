@@ -1,0 +1,5 @@
+streamlit>=1.31.0
+textblob>=0.18.0
+fpdf2>=2.7.9
+numpy>=1.24.0
+PyQt6>=6.6.0

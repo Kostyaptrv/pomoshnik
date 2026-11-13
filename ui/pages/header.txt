@@ -1,0 +1,22 @@
+﻿``python
+import os
+import sys
+sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))))
+
+from PyQt6.QtWidgets import (
+    QWidget, QVBoxLayout, QHBoxLayout, QLabel,
+    QLineEdit, QPushButton, QTextEdit,
+    QProgressBar, QScrollArea, QFrame,
+    QMessageBox, QFileDialog, QDialog, QInputDialog,
+    QListWidget, QListWidgetItem, QComboBox,
+)
+from PyQt6.QtCore import Qt, pyqtSignal, QTimer
+from PyQt6.QtGui import QFont
+
+from engine import editor
+from engine import structure
+from engine import rhymes
+from engine import history
+from engine import rhyme_analyzer
+from utils import export
+from engine import phrases as phrases_engine

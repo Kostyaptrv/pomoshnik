@@ -1,0 +1,388 @@
+/* ===== Pomoshnik — Modern Dark Theme ===== */
+
+/* Основные переменные */
+:root {
+  --bg-primary: #0f0f23;
+  --bg-secondary: #1a1a2e;
+  --bg-card: #16213e;
+  --bg-hover: #1f2b4d;
+  --accent-primary: #e94560;
+  --accent-secondary: #0f3460;
+  --accent-gradient: linear-gradient(135deg, #e94560 0%, #0f3460 100%);
+  --text-primary: #ffffff;
+  --text-secondary: #b8b8d4;
+  --text-muted: #6c6c8a;
+  --border-color: #2a2a4a;
+  --shadow-color: rgba(233, 69, 96, 0.15);
+  --success-color: #4ade80;
+  --warning-color: #fbbf24;
+  --info-color: #60a5fa;
+}
+
+/* Фон страницы */
+.stApp {
+  background: var(--bg-primary);
+  background-image: 
+    radial-gradient(ellipse at 10% 20%, rgba(233, 69, 96, 0.08) 0%, transparent 40%),
+    radial-gradient(ellipse at 90% 80%, rgba(15, 52, 96, 0.15) 0%, transparent 40%);
+}
+
+/* Заголовки */
+.stMain > div > main h1,
+.stMain > div > main h2,
+.stMain > div > main h3 {
+  color: var(--text-primary) !important;
+  font-weight: 700 !important;
+  letter-spacing: -0.5px !important;
+}
+
+/* Боковая панель */
+.css-1d3f6yc.e1b8dvmq0,
+.css-1d3f6yc {
+  background: var(--bg-secondary) !important;
+  border-right: 2px solid var(--border-color) !important;
+}
+
+.css-1d3f6yc label,
+.css-1d3f6yc .stRadio label,
+.css-1d3f6yc [data-testid="stRadio"] {
+  color: var(--text-primary) !important;
+}
+
+/* Sidebar buttons hover */
+.css-1d3f6yc .stButton > button {
+  text-align: left !important;
+}
+
+.css-1d3f6yc .stButton > button:hover {
+  transform: translateX(8px) !important;
+}
+
+/* Кнопки */
+.stButton > button {
+  background: var(--accent-gradient) !important;
+  color: white !important;
+  border: none !important;
+  border-radius: 12px !important;
+  padding: 0.5rem 1.5rem !important;
+  font-weight: 600 !important;
+  transition: all 0.3s ease !important;
+  box-shadow: 0 4px 15px var(--shadow-color) !important;
+}
+
+.stButton > button:hover {
+  transform: translateY(-2px) !important;
+  box-shadow: 0 6px 20px var(--shadow-color) !important;
+}
+
+/* Secondary buttons (sidebar nav) */
+.stButton > button[data-testid="baseButton-secondary"] {
+  background: var(--bg-card) !important;
+  color: var(--text-primary) !important;
+  border: 1px solid var(--border-color) !important;
+  box-shadow: none !important;
+}
+
+.stButton > button[data-testid="baseButton-secondary"]:hover {
+  background: var(--bg-hover) !important;
+  border-color: var(--accent-primary) !important;
+  transform: translateX(8px) !important;
+}
+
+/* Карточки */
+.css-1lcb3c9,
+.css-16nbm5t {
+  background: var(--bg-card) !important;
+  border: 1px solid var(--border-color) !important;
+  border-radius: 16px !important;
+  padding: 1.5rem !important;
+  transition: all 0.3s ease !important;
+}
+
+.css-1lcb3c9:hover,
+.css-16nbm5t:hover {
+  border-color: var(--accent-primary) !important;
+  box-shadow: 0 8px 25px var(--shadow-color) !important;
+  transform: translateY(-4px) !important;
+}
+
+/* Template cards — equal height in grid */
+.template-grid {
+  display: flex !important;
+  flex-wrap: wrap !important;
+  gap: 1rem !important;
+}
+
+.template-grid > div {
+  flex: 1 !important;
+  min-width: 0 !important;
+}
+
+.template-card {
+  background: var(--bg-card) !important;
+  border: 1px solid var(--border-color) !important;
+  border-radius: 16px !important;
+  padding: 1.5rem !important;
+  transition: all 0.3s ease !important;
+  height: 100% !important;
+  display: flex !important;
+  flex-direction: column !important;
+  justify-content: space-between !important;
+}
+
+.template-card:hover {
+  border-color: var(--accent-primary) !important;
+  box-shadow: 0 8px 25px var(--shadow-color) !important;
+  transform: translateY(-4px) !important;
+}
+
+/* Текстовые поля */
+.stTextInput > div > div > input,
+.textarea > div > div > textarea {
+  background: var(--bg-secondary) !important;
+  border: 2px solid var(--border-color) !important;
+  color: var(--text-primary) !important;
+  border-radius: 10px !important;
+  transition: all 0.3s ease !important;
+}
+
+.stTextInput > div > div > input:focus,
+.textarea > div > div > textarea:focus {
+  border-color: var(--accent-primary) !important;
+  box-shadow: 0 0 0 3px rgba(233, 69, 96, 0.1) !important;
+}
+
+/* Select */
+.stSelectbox > div > div > div,
+.stSelectbox > div > div {
+  background: var(--bg-secondary) !important;
+  border-color: var(--border-color) !important;
+  color: var(--text-primary) !important;
+}
+
+/* Expander */
+.streamlit-expanderHeader {
+  background: var(--bg-card) !important;
+  border: 1px solid var(--border-color) !important;
+  border-radius: 12px !important;
+  color: var(--text-primary) !important;
+  padding: 0.75rem 1rem !important;
+  transition: all 0.3s ease !important;
+  margin-bottom: 0.5rem !important;
+}
+
+.streamlit-expanderHeader:hover {
+  border-color: var(--accent-primary) !important;
+  background: var(--bg-hover) !important;
+}
+
+.streamlit-expanderHeader[aria-expanded="true"] {
+  background: var(--accent-gradient) !important;
+  border-color: var(--accent-primary) !important;
+  color: white !important;
+  border-radius: 12px 12px 0 0 !important;
+}
+
+.streamlit-expanderContent {
+  border: 1px solid var(--border-color) !important;
+  border-radius: 0 0 12px 12px !important;
+  background: var(--bg-secondary) !important;
+}
+
+.streamlit-expanderContent .block-container {
+  padding-left: 2rem !important;
+  padding-right: 2rem !important;
+}
+
+/* Status messages */
+.stSuccess,
+.stInfo,
+.stWarning {
+  background: var(--bg-card) !important;
+  border: 1px solid var(--border-color) !important;
+  border-radius: 12px !important;
+}
+
+/* Список песен */
+.css-1v5gkz {
+  background: var(--bg-card) !important;
+  border: 1px solid var(--border-color) !important;
+  border-radius: 16px !important;
+  padding: 1.5rem !important;
+  margin-bottom: 1rem !important;
+}
+
+/* Кастомные компоненты */
+.card-container {
+  background: var(--bg-card);
+  border: 1px solid var(--border-color);
+  border-radius: 16px;
+  padding: 2rem;
+  margin: 1rem 0;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.card-container:hover {
+  border-color: var(--accent-primary);
+  box-shadow: 0 8px 25px var(--shadow-color);
+  transform: translateY(-4px);
+}
+
+.feature-card {
+  background: var(--bg-card);
+  border: 1px solid var(--border-color);
+  border-radius: 16px;
+  padding: 2rem;
+  text-align: center;
+  transition: all 0.3s ease;
+  cursor: pointer;
+  height: 100%;
+}
+
+.feature-card:hover {
+  border-color: var(--accent-primary);
+  transform: translateY(-8px) scale(1.02);
+  box-shadow: 0 12px 30px var(--shadow-color);
+}
+
+.feature-icon {
+  font-size: 3rem;
+  margin-bottom: 1rem;
+  display: block;
+}
+
+.feature-title {
+  color: var(--text-primary);
+  font-weight: 600;
+  font-size: 1.25rem;
+  margin-bottom: 0.5rem;
+}
+
+.feature-desc {
+  color: var(--text-secondary);
+  font-size: 0.9rem;
+  line-height: 1.5;
+}
+
+/* Градиентный текст */
+.gradient-text {
+  background: var(--accent-gradient);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  font-weight: 800;
+}
+
+/* Кнопки навигации */
+.nav-button {
+  background: var(--bg-card);
+  border: 1px solid var(--border-color);
+  border-radius: 12px;
+  padding: 1rem 1.5rem;
+  color: var(--text-primary);
+  font-weight: 500;
+  transition: all 0.3s ease;
+  cursor: pointer;
+  width: 100%;
+  text-align: left;
+  margin-bottom: 0.5rem;
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.nav-button:hover {
+  background: var(--bg-hover);
+  border-color: var(--accent-primary);
+  transform: translateX(8px);
+}
+
+.nav-button.active {
+  background: var(--accent-gradient);
+  border-color: var(--accent-primary);
+  box-shadow: 0 4px 15px var(--shadow-color);
+}
+
+/* Прогресс-бар */
+.stProgress > div > div > div > div {
+  background: var(--accent-gradient) !important;
+  border-radius: 10px !important;
+}
+
+/* Скроллбар */
+::-webkit-scrollbar {
+  width: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: var(--bg-secondary);
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--border-color);
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--accent-primary);
+}
+
+/* Анимации */
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(20px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes pulse {
+  0%, 100% { transform: scale(1); }
+  50% { transform: scale(1.05); }
+}
+
+.animate-fade-in {
+  animation: fadeIn 0.5s ease-out;
+}
+
+.animate-pulse {
+  animation: pulse 2s ease-in-out infinite;
+}
+
+/* Статистика */
+.stat-card {
+  background: var(--bg-card);
+  border: 1px solid var(--border-color);
+  border-radius: 12px;
+  padding: 1.5rem;
+  text-align: center;
+}
+
+.stat-value {
+  color: var(--accent-primary);
+  font-size: 2rem;
+  font-weight: 700;
+  margin-bottom: 0.25rem;
+}
+
+.stat-label {
+  color: var(--text-secondary);
+  font-size: 0.875rem;
+}
+
+/* Tabs */
+.stTabs [data-baseweb="tab-list"] {
+  gap: 8px;
+}
+
+.stTabs [data-baseweb="tab"] {
+  background: var(--bg-card) !important;
+  border: 1px solid var(--border-color) !important;
+  border-radius: 10px !important;
+  color: var(--text-secondary) !important;
+  padding: 0.5rem 1.5rem !important;
+}
+
+.stTabs [data-baseweb="tab"][aria-selected="true"] {
+  background: var(--accent-gradient) !important;
+  border-color: var(--accent-primary) !important;
+  color: white !important;
+}
