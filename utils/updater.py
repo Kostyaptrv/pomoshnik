@@ -7,6 +7,16 @@ import urllib.request
 import urllib.error
 from datetime import datetime
 from typing import Optional, Tuple
+import logging
+
+# Настройка логгера
+logger = logging.getLogger(__name__)
+if not logger.handlers:
+    handler = logging.StreamHandler()
+    formatter = logging.Formatter('[Updater] %(message)s')
+    handler.setFormatter(formatter)
+    logger.addHandler(handler)
+    logger.setLevel(logging.DEBUG)
 
 # Текущая версия приложения
 APP_VERSION = "1.0"
@@ -35,6 +45,9 @@ def check_for_updates(timeout: int = 10) -> Optional[dict]:
             "published_at": "2025-01-01T00:00:00Z"
         }
     """
+    logger.info(f"Проверка обновлений... (текущая версия: {APP_VERSION})")
+    logger.info(f"GitHub URL: {GITHUB_API_URL}")
+    
     try:
         req = urllib.request.Request(
             GITHUB_API_URL,
@@ -49,17 +62,26 @@ def check_for_updates(timeout: int = 10) -> Optional[dict]:
             
             # Проверяем, есть ли новая версия
             latest_version = data.get("tag_name", APP_VERSION).lstrip("v")
+            logger.info(f"Последняя версия на GitHub: {latest_version}")
+            
+            if latest_version == APP_VERSION:
+                logger.info("У вас установлена последняя версия")
+                return None
             
             if _compare_versions(latest_version, APP_VERSION) > 0:
+                logger.info(f"Доступно обновление: {latest_version} > {APP_VERSION}")
                 # Находим исполняемый файл в релизах
                 asset = None
                 for a in data.get("assets", []):
-                    if "Помощник" in a.get("name", "") and a.get("name", "").endswith(".exe"):
+                    asset_name = a.get("name", "")
+                    logger.info(f"Проверка актива: {asset_name}")
+                    if "Помощник" in asset_name and asset_name.endswith(".exe"):
                         asset = a
+                        logger.info(f"Найден актив: {asset_name}")
                         break
                 
                 if asset:
-                    return {
+                    result = {
                         "version": latest_version,
                         "download_url": asset["browser_download_url"],
                         "asset_name": asset["name"],
@@ -67,17 +89,28 @@ def check_for_updates(timeout: int = 10) -> Optional[dict]:
                         "published_at": data.get("published_at", ""),
                         "size": asset.get("size", 0),
                     }
+                    logger.info(f"Возвращаю информацию об обновлении")
+                    return result
+                else:
+                    logger.warning(".exe файл не найден в релизе")
+                    return None
+            else:
+                logger.info(f"Новая версия {latest_version} не новее {APP_VERSION}")
+                return None
             
-            return None
-            
-    except urllib.error.URLError as e:
-        print(f"[Updater] Network error: {e}")
+    except urllib.error.HTTPError as e:
+        logger.error(f"HTTP ошибка: {e.code} - {e.reason}")
+        if e.code == 404:
+            logger.error("Релиз не найден! Создайте релиз v1.0 на GitHub")
         return None
-    except json.JSONDecodeError:
-        print("[Updater] Invalid JSON response")
+    except urllib.error.URLError as e:
+        logger.error(f"Network error: {e.reason}")
+        return None
+    except json.JSONDecodeError as e:
+        logger.error(f"Invalid JSON response: {e}")
         return None
     except Exception as e:
-        print(f"[Updater] Unexpected error: {e}")
+        logger.error(f"Unexpected error: {type(e).__name__}: {e}")
         return None
 
 

@@ -12,7 +12,8 @@ from utils.updater import (
     download_update,
     cleanup_update,
     format_size,
-    format_date
+    format_date,
+    APP_VERSION
 )
 
 
@@ -181,7 +182,7 @@ class UpdateDialog(QDialog):
             self.title_label.setText("Всё обновлено!")
             self.status_icon.setText("✅")
             self.description_label.setText(
-                f"У вас установлена последняя версия {update_info['version'] if update_info else '1.0'}"
+                f"У вас установлена последняя версия {APP_VERSION}"
             )
             self.later_btn.setText("OK")
     
@@ -193,8 +194,7 @@ class UpdateDialog(QDialog):
             "Проверьте подключение к интернету и попробуйте позже"
         )
         self.details_text.setVisible(True)
-        self.details_text.setText(error_msg)
-        self.details_text.setVisible(False)
+        self.details_text.setText(f"<pre>{error_msg}</pre>")
     
     def _install_update(self):
         """Запускает скачивание и установку."""
