@@ -75,7 +75,9 @@ def check_for_updates(timeout: int = 10) -> Optional[dict]:
                 for a in data.get("assets", []):
                     asset_name = a.get("name", "")
                     logger.info(f"Проверка актива: {asset_name}")
-                    if "Помощник" in asset_name and asset_name.endswith(".exe"):
+                    # Ищем setup-файл (поддержка латиницы и кириллицы)
+                    if (asset_name.endswith(".exe") and 
+                        ("Pomoshnik" in asset_name or "Помощник" in asset_name)):
                         asset = a
                         logger.info(f"Найден актив: {asset_name}")
                         break

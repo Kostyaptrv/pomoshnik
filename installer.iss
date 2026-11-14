@@ -19,7 +19,7 @@ DefaultGroupName={#MyAppName}
 AllowNoIcons=yes
 LicenseFile=
 OutputDir=installer
-OutputBaseFilename=Помощник_установщик_1.0
+OutputBaseFilename=Pomoshnik_Setup_1.0
 SetupIconFile=app_icon.ico
 
 ; Настройки установки
