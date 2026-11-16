@@ -5,9 +5,25 @@
 
 import json
 import os
+import sys
 
 # Путь к пользовательским фразам
-DATA_DIR = os.path.join(os.path.dirname(os.path.dirname(__file__)), "data")
+DATA_DIR = os.path.join(os.path.dirname(sys.executable), "data")
+
+
+def _data_path(name: str) -> str:
+    """Get path to data file, checking frozen app first."""
+    if getattr(sys, 'frozen', False):
+        applied_dir = os.path.dirname(sys.executable)
+        candidate = os.path.join(applied_dir, "data", name)
+        if os.path.exists(candidate):
+            return candidate
+    src_dir = os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", "data", name)
+    if os.path.exists(src_dir):
+        return src_dir
+    return os.path.join(applied_dir, "data", name)
+
+
 CUSTOM_PHRASES_FILE = os.path.join(DATA_DIR, "custom_phrases.json")
 
 # Словарь категорий с фразами, организованными по темам
@@ -180,16 +196,18 @@ PHRASES = {
 
 def _load_custom_phrases() -> dict:
     """Загружает пользовательские фразы."""
-    if os.path.exists(CUSTOM_PHRASES_FILE):
-        with open(CUSTOM_PHRASES_FILE, "r", encoding="utf-8") as f:
+    phrases_file = _data_path("custom_phrases.json")
+    if os.path.exists(phrases_file):
+        with open(phrases_file, "r", encoding="utf-8") as f:
             return json.load(f)
     return {}
 
 
 def _save_custom_phrases(phrases: dict):
     """Сохраняет пользовательские фразы."""
-    os.makedirs(DATA_DIR, exist_ok=True)
-    with open(CUSTOM_PHRASES_FILE, "w", encoding="utf-8") as f:
+    data_dir = os.path.dirname(_data_path("custom_phrases.json"))
+    os.makedirs(data_dir, exist_ok=True)
+    with open(_data_path("custom_phrases.json"), "w", encoding="utf-8") as f:
         json.dump(phrases, ensure_ascii=False, indent=2)
 
 

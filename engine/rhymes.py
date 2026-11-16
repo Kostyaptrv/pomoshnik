@@ -2,19 +2,36 @@
 import json
 import os
 import re
+import sys
 from typing import Optional
 
 
-DATA_DIR = os.path.join(os.path.dirname(os.path.dirname(__file__)), "data")
+DATA_DIR = os.path.join(os.path.dirname(sys.executable), "data")
 RHYMES_FILE = os.path.join(DATA_DIR, "rhymes_dict.json")
+
+
+def _data_path(name: str) -> str:
+    """Get path to data file, checking frozen app first."""
+    if getattr(sys, 'frozen', False):
+        # Running as PyInstaller bundle
+        applied_dir = os.path.dirname(sys.executable)
+        candidate = os.path.join(applied_dir, "data", name)
+        if os.path.exists(candidate):
+            return candidate
+    # Fallback to source data directory
+    src_dir = os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", "data", name)
+    if os.path.exists(src_dir):
+        return src_dir
+    return os.path.join(applied_dir, "data", name)
 
 
 def _load_rhymes() -> dict:
     """Загрузка словаря рифм из JSON файла."""
-    if not os.path.exists(RHYMES_FILE):
+    rhymes_file = _data_path("rhymes_dict.json")
+    if not os.path.exists(rhymes_file):
         return {}
     try:
-        with open(RHYMES_FILE, "r", encoding="utf-8") as f:
+        with open(rhymes_file, "r", encoding="utf-8") as f:
             content = f.read().strip()
             if not content:
                 return {}

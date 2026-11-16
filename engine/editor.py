@@ -1,14 +1,19 @@
 """Движок для редактирования и управления песнями."""
 import json
 import os
+import sys
 import uuid
 from datetime import datetime
 from typing import Optional
 
 from engine.rhymes import get_rhymes
 
-STORAGE_DIR = os.path.join(os.path.dirname(os.path.dirname(__file__)), "storage", "songs")
-os.makedirs(STORAGE_DIR, exist_ok=True)
+STORAGE_DIR = os.path.join(os.path.dirname(sys.executable), "storage", "songs")
+
+
+def _ensure_storage():
+    """Ensure storage directory exists."""
+    os.makedirs(STORAGE_DIR, exist_ok=True)
 
 
 def _get_song_path(song_id: str) -> str:
@@ -29,6 +34,8 @@ def create_song(title: str, style_id: str, template_context: dict) -> dict:
     """
     song_id = str(uuid.uuid4())[:8]
     now = datetime.now().isoformat()
+
+    _ensure_storage()
 
     song = {
         "id": song_id,
@@ -95,6 +102,8 @@ def get_all_songs() -> list[dict]:
         Список словарей с данными песен, включая статистику.
     """
     songs = []
+
+    _ensure_storage()
 
     if not os.path.exists(STORAGE_DIR):
         return songs
