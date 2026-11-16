@@ -1,0 +1,1 @@
+Fix installer.iss: remove duplicate data section and clean up

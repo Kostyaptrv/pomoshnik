@@ -27,23 +27,17 @@ Compression=lzma2/ultra64
 SolidCompression=yes
 WizardStyle=modern
 UninstallDisplayIcon={app}\{#MyAppExeName}
-PrivilegesRequired=admin
 
 [Files]
 ; Основной исполняемый файл и все зависимости из dist
 Source: "dist\*"; DestDir: "{app}"; Flags: ignoreversion recursesubdirs createallsubdirs
 
+; Данные приложения (словари, фразы, шаблоны)
+Source: "data\*"; DestDir: "{app}\data"; Flags: ignoreversion recursesubdirs createallsubdirs
+
 [Icons]
 ; Ярлык в группу меню "Программы"
 Name: "{group}\{#MyAppName}"; Filename: "{app}\{#MyAppExeName}"; IconFilename: "{app}\app_icon.ico"
-Name: "{group}\{#MyAppName} (Портативный)"; Filename: "{app}\{#MyAppExeName}"; IconFilename: "{app}\app_icon.ico"
-
-; Ярлык на рабочий стол
-Name: "{userdesktop}\{#MyAppName}"; Filename: "{app}\{#MyAppExeName}"; IconFilename: "{app}\app_icon.ico"
-Name: "{commondesktop}\{#MyAppName}"; Filename: "{app}\{#MyAppExeName}"; IconFilename: "{app}\app_icon.ico"
-
-; Ярлык в панель быстрого доступа
-Name: "{autoprograms}\{#MyAppName}"; Filename: "{app}\{#MyAppExeName}"; IconFilename: "{app}\app_icon.ico"
 
 [Uninstall]
 Delete: {app}\*
