@@ -46,6 +46,7 @@ a = Analysis(
     binaries=[],
     datas=[
         ('data/*.json', 'data'),
+        ('data/logs', 'data/logs'),
         ('assets/qss/*.qss', 'assets/qss'),
         ('app_icon.ico', '.'),
     ],
