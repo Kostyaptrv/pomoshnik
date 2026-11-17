@@ -74,10 +74,14 @@ class MainWindow(QMainWindow):
     def _load_stylesheet(self):
         """Загружает QSS тему."""
         theme = "dark_theme.qss" if self.is_dark_theme else "light_theme.qss"
-        qss_path = os.path.join(
-            os.path.dirname(os.path.dirname(__file__)),
-            "assets", "qss", theme
-        )
+        
+        # Get base path - works in both frozen and dev mode
+        if getattr(sys, 'frozen', False):
+            base_dir = os.path.dirname(sys.executable)
+        else:
+            base_dir = os.path.dirname(os.path.dirname(__file__))
+        
+        qss_path = os.path.join(base_dir, "assets", "qss", theme)
         if os.path.exists(qss_path):
             with open(qss_path, "r", encoding="utf-8") as f:
                 self.setStyleSheet(f.read())
@@ -91,8 +95,9 @@ class MainWindow(QMainWindow):
 
     def _load_state(self):
         """Загружает состояние приложения."""
+        import sys
         state_path = os.path.join(
-            os.path.dirname(os.path.dirname(__file__)),
+            os.path.dirname(sys.executable),
             "data", "app_state.json"
         )
         if os.path.exists(state_path):
@@ -116,8 +121,9 @@ class MainWindow(QMainWindow):
 
     def _save_state(self):
         """Сохраняет состояние приложения."""
+        import sys
         state_path = os.path.join(
-            os.path.dirname(os.path.dirname(__file__)),
+            os.path.dirname(sys.executable),
             "data", "app_state.json"
         )
         try:
