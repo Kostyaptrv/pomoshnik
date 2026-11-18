@@ -37,7 +37,7 @@ Source: "data\*"; DestDir: "{app}\data"; Flags: ignoreversion recursesubdirs cre
 
 [Icons]
 ; Ярлык в группу меню "Программы"
-Name: "{group}\{#MyAppName}"; Filename: "{app}\{#MyAppExeName}"; IconFilename: "{app}\app_icon.ico"
+Name: "{group}\{#MyAppName}"; Filename: "{app}\{#MyAppExeName}"; IconFilename: "{app}\app_icon.ico"; WorkingDir: "{app}"
 
 [Uninstall]
 Delete: {app}\*
