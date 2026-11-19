@@ -2,7 +2,7 @@
 
 from PyQt6.QtWidgets import (
     QWidget, QVBoxLayout, QHBoxLayout, QLabel,
-    QPushButton, QFrame,
+    QPushButton, QFrame, QMessageBox,
 )
 from PyQt6.QtCore import Qt, pyqtSignal as Signal
 from PyQt6.QtGui import QFont
@@ -99,16 +99,25 @@ class TemplatesPage(QWidget):
 
     def _select_template(self, style_id: str):
         """Выбирает шаблон и переходит к редактору."""
-        from ui.main_window import MainWindow
-        parent = self.window()
-        if isinstance(parent, MainWindow):
-            idx = parent._get_page_index("editor")
-            if idx >= 0:
-                parent.stacked.setCurrentIndex(idx)
-                parent.nav_list.setCurrentRow(parent._get_page_index("editor"))
+        try:
+            from ui.main_window import MainWindow
+            parent = self.window()
+            if isinstance(parent, MainWindow):
+                idx = parent._get_page_index("editor")
+                if idx >= 0:
+                    parent.stacked.setCurrentIndex(idx)
+                    parent.nav_list.setCurrentRow(parent._get_page_index("editor"))
 
-                # Передаём selected template на editor page
-                if hasattr(parent, 'editor_page'):
-                    parent.editor_page.set_template(style_id)
-
-        self.template_selected.emit(style_id)
+                    # Передаём selected template на editor page
+                    if hasattr(parent, 'editor_page'):
+                        parent.editor_page.set_template(style_id)\n
+            self.template_selected.emit(style_id)
+        except Exception as e:
+            import traceback
+            print(f"ERROR in _select_template: {e}")
+            traceback.print_exc()
+            QMessageBox.critical(
+                self,
+                "Ошибка",
+                f"Не удалось выбрать шаблон:\n{e}\n\n{traceback.format_exc()}"
+            )
