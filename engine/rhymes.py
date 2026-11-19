@@ -12,9 +12,10 @@ RHYMES_FILE = os.path.join(DATA_DIR, "rhymes_dict.json")
 
 def _data_path(name: str) -> str:
     """Get path to data file, checking frozen app first."""
+    applied_dir = os.path.dirname(sys.executable)
+    
     if getattr(sys, 'frozen', False):
         # Running as PyInstaller bundle
-        applied_dir = os.path.dirname(sys.executable)
         candidate = os.path.join(applied_dir, "data", name)
         if os.path.exists(candidate):
             return candidate

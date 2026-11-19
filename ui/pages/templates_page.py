@@ -110,7 +110,7 @@ class TemplatesPage(QWidget):
 
                     # Передаём selected template на editor page
                     if hasattr(parent, 'editor_page'):
-                        parent.editor_page.set_template(style_id)\n
+                        parent.editor_page.set_template(style_id)
             self.template_selected.emit(style_id)
         except Exception as e:
             import traceback
