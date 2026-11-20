@@ -963,7 +963,7 @@ class EditorPage(QWidget):
             if words:
                 last_word = words[-1].strip(".,!?;:\"')\\]")
                 if len(last_word) > 2:
-                    rhyme_list = rhymes.get_rhymes(last_word, max_results=10)
+                    rhyme_list = rhymes.get_rhymes(last_word, max_results=15)
                     if rhyme_list:
                         all_rhymes[last_word.lower()] = rhyme_list
 
@@ -972,12 +972,12 @@ class EditorPage(QWidget):
 
         # Получаем фразы по категории секции
         category_map = {
-            "куплет": ["love", "nature", "pain", "hope"],
-            "припев": ["love", "hope", "dreams"],
-            "бридж": ["pain", "hope", "time"],
-            "интро": ["nature", "dreams"],
+            "куплет": ["love", "nature", "pain", "hope", "dreams"],
+            "припев": ["love", "hope", "dreams", "time"],
+            "бридж": ["pain", "hope", "time", "nature"],
+            "интро": ["nature", "dreams", "time"],
             "проигрыш": [],
-            "аутро": ["hope", "time"],
+            "аутро": ["hope", "time", "pain"],
         }
 
         categories = category_map.get(section_type, ["love", "hope"])
@@ -991,50 +991,101 @@ class EditorPage(QWidget):
             rhyme_pool.extend(rhymes_list)
         rhyme_pool = list(set(rhyme_pool))
 
+        # Определяем схему рифмовки для генерации
+        scheme = rhyme_scheme if rhyme_scheme in ["AABB", "ABAB"] else "AABB"
+
         for i in range(target_lines):
             line_num = i + 1
 
-            # Чётные строки (1, 3, 5...) — берём фразу
-            # Нечётные (2, 4, 6...) — рифмуем к предыдущей
-            if line_num % 2 == 0 and generated:
-                # Рифмуем к предыдущей строке
-                prev_line = generated[-1]
-                prev_words = prev_line.split()
-                if prev_words:
-                    prev_end = prev_words[-1].strip(".,!?;:\"')\\]")
-                    # Ищем рифму к предыдущей строке
-                    target_rhymes = rhymes.get_rhymes(prev_end.lower(), max_results=8)
-
-                    if target_rhymes and available_phrases:
-                        # Комбинируем: фраза + рифма
-                        phrase = random.choice(available_phrases)
-                        rhyme = random.choice(target_rhymes)
-                        words = phrase.split()
-                        if len(words) > 2:
-                            # Заменяем последнее слово на рифму
-                            new_line = " ".join(words[:-1]) + " " + rhyme
-                            generated.append(new_line)
+            if scheme == "AABB":
+                # Парная рифмовка: 1-2 рифмуются, 3-4 рифмуются
+                if line_num % 2 == 0 and generated:
+                    # Рифма к предыдущей строке
+                    prev_line = generated[-1]
+                    prev_words = prev_line.split()
+                    if prev_words:
+                        prev_end = prev_words[-1].strip(".,!?;:\"')\\]").lower()
+                        target_rhymes = rhymes.get_rhymes(prev_end, max_results=10)
+                        if target_rhymes and available_phrases:
+                            # Комбинируем: фраза + рифма
+                            phrase = random.choice(available_phrases)
+                            rhyme = random.choice(target_rhymes)
+                            words = phrase.split()
+                            if len(words) > 2:
+                                new_line = " ".join(words[:-1]) + " " + rhyme
+                                generated.append(new_line)
+                            else:
+                                generated.append(rhyme)
+                        elif target_rhymes:
+                            generated.append(random.choice(target_rhymes))
+                        elif available_phrases:
+                            generated.append(random.choice(available_phrases))
                         else:
-                            generated.append(rhyme)
-                    elif target_rhymes:
-                        generated.append(random.choice(target_rhymes))
-                    elif available_phrases:
-                        generated.append(random.choice(available_phrases))
+                            generated.append(self._make_smart_line(section_type, prev_end, rhyme_pool))
                     else:
-                        generated.append(self._make_filler_line(section_type))
+                        generated.append(self._make_smart_line(section_type, "", rhyme_pool))
                 else:
-                    generated.append(self._make_filler_line(section_type))
-            else:
-                # Новая строка — берём фразу или рифму
-                if available_phrases and random.random() > 0.3:
-                    generated.append(random.choice(available_phrases))
-                elif rhyme_pool:
-                    generated.append(random.choice(rhyme_pool))
-                elif tips:
-                    tip = random.choice(tips)
-                    generated.append(self._make_tip_line(tip))
+                    # Новая строка — фраза или рифма
+                    if available_phrases and random.random() > 0.2:
+                        generated.append(random.choice(available_phrases))
+                    elif rhyme_pool:
+                        generated.append(random.choice(rhyme_pool))
+                    else:
+                        generated.append(self._make_smart_line(section_type, "", rhyme_pool))
+
+            else:  # ABAB
+                # Перекрёстная рифмовка: 1=3, 2=4
+                if line_num <= 2:
+                    # Первые две строки — фразы
+                    if available_phrases and random.random() > 0.2:
+                        generated.append(random.choice(available_phrases))
+                    elif rhyme_pool:
+                        generated.append(random.choice(rhyme_pool))
+                    else:
+                        generated.append(self._make_smart_line(section_type, "", rhyme_pool))
+                elif line_num == 3:
+                    # Рифма к строке 1
+                    if generated:
+                        w1 = generated[0].split()[-1].strip(".,!?;:\"')\\]").lower()
+                        r1 = rhymes.get_rhymes(w1, max_results=10)
+                        if r1 and available_phrases:
+                            phrase = random.choice(available_phrases)
+                            rhyme = random.choice(r1)
+                            words = phrase.split()
+                            if len(words) > 2:
+                                generated.append(" ".join(words[:-1]) + " " + rhyme)
+                            else:
+                                generated.append(rhyme)
+                        elif r1:
+                            generated.append(random.choice(r1))
+                        else:
+                            generated.append(self._make_smart_line(section_type, w1, rhyme_pool))
+                    else:
+                        generated.append(self._make_smart_line(section_type, "", rhyme_pool))
                 else:
-                    generated.append(self._make_filler_line(section_type))
+                    # Рифма к строке 2
+                    if generated:
+                        w2 = generated[1].split()[-1].strip(".,!?;:\"')\\]").lower()
+                        r2 = rhymes.get_rhymes(w2, max_results=10)
+                        if r2 and available_phrases:
+                            phrase = random.choice(available_phrases)
+                            rhyme = random.choice(r2)
+                            words = phrase.split()
+                            if len(words) > 2:
+                                generated.append(" ".join(words[:-1]) + " " + rhyme)
+                            else:
+                                generated.append(rhyme)
+                        elif r2:
+                            generated.append(random.choice(r2))
+                        else:
+                            generated.append(self._make_smart_line(section_type, w2, rhyme_pool))
+                    else:
+                        generated.append(self._make_smart_line(section_type, "", rhyme_pool))
+
+            # Добавляем подсказки если есть
+            if tips and random.random() > 0.7:
+                tip = random.choice(tips)
+                generated[-1] = self._enhance_with_tip(generated[-1], tip)
 
         return generated
 
@@ -1086,25 +1137,32 @@ class EditorPage(QWidget):
                 "Мечты летят сквозь время и простор",
                 "Сердце ищет свой единственный путь",
                 "Тени прошлого касаются огня",
+                "Шаги эхом отражаются от стен",
+                "Ветер уносит последние листья",
             ],
             "припев": [
                 "И я пою тебе эту песню",
                 "Это наше общее небо",
                 "Мы одни на этом свете",
                 "Ты и я — одна история",
+                "Пусть мир остановится на мгновенье",
+                "Сердце бьётся в унисон со звёздами",
             ],
             "бридж": [
                 "Всё меняется, но чувства остаются",
                 "За горизонтом начинается новый день",
                 "Это последний шанс сказать",
+                "Когда всё кажется невозможным",
             ],
             "интро": [
                 "Ветер приносит звуки далёких мест",
                 "Ночь опускается на пустой город",
+                "Рассвет окрашивает небо в розовый",
             ],
             "аутро": [
                 "И всё затихает навсегда",
                 "Эхо разносится по пустым улицам",
+                "Последний аккорд растворяется в тишине",
             ],
             "проигрыш": [],
         }
@@ -1114,9 +1172,37 @@ class EditorPage(QWidget):
             return random.choice(lines)
         return "Звучит музыка..."
 
-    def _make_tip_line(self, tip: str) -> str:
-        """Создает строку на основе подсказки."""
-        return f"Вдохновлённый: {tip}"
+    def _make_smart_line(self, section_type: str, rhyme_word: str, rhyme_pool: list) -> str:
+        """Создает умную строку с рифмой или без."""
+        # Если есть рифма к слову, используем её
+        if rhyme_word:
+            rhymes_list = rhymes.get_rhymes(rhyme_word.lower(), max_results=10)
+            if rhymes_list:
+                base_phrases = [
+                    f"В мире где {rhyme_word} звучит",
+                    f"Снова думаю о {rhyme_word}",
+                    f"Этот {rhyme_word} как символ",
+                ]
+                return random.choice(base_phrases)
+
+        # Используем пул рифм
+        if rhyme_pool:
+            return random.choice(rhyme_pool)
+
+        # fallback
+        return self._make_filler_line(section_type)
+
+    def _enhance_with_tip(self, line: str, tip: str) -> str:
+        """Улучшает строку с учетом подсказки."""
+        enhancements = [
+            f"{line} — как будто в песне",
+            f"{line}, шепча себе под нос",
+            f"{line}, и мир оживает",
+            f"{line} — это наша история",
+        ]
+        if random.random() > 0.5:
+            return random.choice(enhancements)
+        return line
 
     def eventFilter(self, obj, event):
         if obj == self.text_edit and isinstance(event, QKeyEvent):
