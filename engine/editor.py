@@ -8,7 +8,7 @@ from typing import Optional
 
 from engine.rhymes import get_rhymes
 
-STORAGE_DIR = os.path.join(os.path.dirname(sys.executable), "storage", "songs")
+STORAGE_DIR = os.path.join(os.environ.get("APPDATA", ""), "Pomoshnik", "songs")
 
 
 def _ensure_storage():
